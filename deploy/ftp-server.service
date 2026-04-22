@@ -1,0 +1,13 @@
+[Unit]
+Description=TCP File Transfer Server for CC Assignment 1
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/opc/CC_Assignment1
+ExecStart=/usr/bin/python3 serv.py 5001
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -64,6 +64,14 @@ def handle_put(conn, filename: str, size: int) -> None:
         if os.path.exists(path):
             os.remove(path)
         raise
+    except OSError:
+        if os.path.exists(path):
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+        send_line(conn, "ERR Failed to store file")
+        return
     send_line(conn, "OK Upload complete")
 
 
@@ -99,6 +107,8 @@ def handle_client(conn, addr) -> None:
             except ConnectionError:
                 print(f"Upload interrupted: {addr[0]}:{addr[1]}")
                 break
+            except OSError as exc:
+                send_line(conn, f"ERR Server file error: {exc}")
         elif command == "QUIT" and len(parts) == 1:
             send_line(conn, "OK Goodbye")
             print(f"Session closed: {addr[0]}:{addr[1]}")
